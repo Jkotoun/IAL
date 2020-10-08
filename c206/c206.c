@@ -114,13 +114,13 @@ void DLInsertFirst (tDLList *L, int val) {
         new->data = val;
         new->lptr = NULL;
         new->rptr = L->First;
-        if(L->First != NULL)
+        if(L->First == NULL)
         {
-            L->First->lptr = new;
+            L->Last = new; 
         }
         else
         {
-            L->Last = new;
+            L->First->lptr = new;
         }
         
         L->First = new;
@@ -143,14 +143,16 @@ void DLInsertLast(tDLList *L, int val) {
         new->data = val;
         new->rptr = NULL;
         new->lptr = L->Last;
-        if(L->Last != NULL)
-        {
-            L->Last->rptr = new;
-        }
-        else
+        if(L->Last == NULL)
         {
             L->First = new;
         }
+        else
+        {
+            L->Last->rptr = new;
+            
+        }
+        L->Last = new;
     }
 }
 
