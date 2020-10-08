@@ -184,21 +184,19 @@ void PostInsert (tList *L, int val) {
 ** V případě, že není dostatek paměti pro nový prvek při operaci malloc,
 ** zavolá funkci Error().
 **/
-	//neni aktivni, nic se neprovadi
 	if(L->Act != NULL)
     {
         tElemPtr new = (tElemPtr)malloc(sizeof(struct tElem));
-        //chyba pokud neni pamet
         if(new == NULL)
         {
             Error();
             return;
         }
         new->data = val;
-        //vlozeni prvku za aktivni
-        tElemPtr tmp = L->Act->ptr;
+        //insert element after Act
+        new->ptr = L->Act->ptr;
         L->Act->ptr = new;
-        new->ptr = tmp;
+        
     }
 }
 
@@ -246,8 +244,8 @@ int Active (tList *L) {
 ** Je-li seznam L aktivní, vrací nenulovou hodnotu, jinak vrací 0.
 ** Tuto funkci je vhodné implementovat jedním příkazem return. 
 **/
-    //vraci 1 pokud je aktivni, 0 kdyz neni 
-	return L->Act != NULL ?  1 : 0;
+    //0 if not active, 1 if active
+	return L->Act != NULL;
 
 }
 
