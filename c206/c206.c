@@ -307,8 +307,7 @@ void DLPreDelete (tDLList *L) {
         {
             L->First = L->Act;
         }
-        //update rptr of active-2 only if active-1 is not first
-        if(tmp->lptr != NULL)
+        else
         {
             //set rptr of active-2 to active
              tmp->lptr->rptr = L->Act;
@@ -338,9 +337,6 @@ void DLPostInsert (tDLList *L, int val) {
             //left = active and right = active + 2 
             new->rptr = L->Act->rptr;
             new->lptr = L->Act;
-
-            //right pointer of active to new element
-            L->Act->rptr = new;
             if(L->Act == L->Last)
             {
                 L->Last = new;
@@ -350,6 +346,8 @@ void DLPostInsert (tDLList *L, int val) {
                 //set active+1 left pointer to new element
                 L->Act->rptr->lptr = new;
             }
+             //right pointer of active to new element
+            L->Act->rptr = new;
             
         }
         
@@ -363,7 +361,7 @@ void DLPreInsert (tDLList *L, int val) {
 ** V případě, že není dostatek paměti pro nový prvek při operaci malloc,
 ** volá funkci DLError().
 **/
-		if(L->Act != NULL)
+	if(L->Act != NULL)
     {
         tDLElemPtr new = (tDLElemPtr)malloc(sizeof(struct tDLElem));
         if(new == NULL)
@@ -377,8 +375,6 @@ void DLPreInsert (tDLList *L, int val) {
             //left pointer = active-1 and right pointer = active
             new->lptr = L->Act->lptr;
             new->rptr = L->Act;
-            //active left pointer to new
-            L->Act->lptr = new;
             if(L->Act == L->First)
             {
                 L->First = new;
@@ -388,6 +384,9 @@ void DLPreInsert (tDLList *L, int val) {
                 //set active-1 right pointer to new
                 L->Act->lptr->rptr = new;
             }
+            //active left pointer to new
+            L->Act->lptr = new;
+
         }
     }
 }
