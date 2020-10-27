@@ -52,12 +52,13 @@ int solved;
 ** volena s ohledem na maximální kvalitu výsledku). }
 */
 
-int hashCode ( tKey key ) {
+int hashCode(tKey key)
+{
 	int retval = 1;
 	int keylen = strlen(key);
-	for ( int i=0; i<keylen; i++ )
+	for (int i = 0; i < keylen; i++)
 		retval += key[i];
-	return ( retval % HTSIZE );
+	return (retval % HTSIZE);
 }
 
 /*
@@ -65,9 +66,16 @@ int hashCode ( tKey key ) {
 ** se volá pouze před prvním použitím tabulky.
 */
 
-void htInit ( tHTable* ptrht ) {
-
- solved = 0; /*v pripade reseni, smazte tento radek!*/
+void htInit(tHTable *ptrht)
+{
+	if (ptrht != NULL)
+	{
+		//set all hasthtable elements to null
+		for (int i = 0; i < HTSIZE; i++)
+		{
+			(*ptrht)[i] = NULL;
+		}
+	}
 }
 
 /* TRP s explicitně zřetězenými synonymy.
@@ -77,9 +85,20 @@ void htInit ( tHTable* ptrht ) {
 **
 */
 
-tHTItem* htSearch ( tHTable* ptrht, tKey key ) {
-
- solved = 0; /*v pripade reseni, smazte tento radek!*/
+tHTItem *htSearch(tHTable *ptrht, tKey key)
+{
+	int index = hashCode(key);
+	tHTItem *item = (*ptrht)[index];
+	//iterate over all items with same hash code
+	while (item != NULL)
+	{
+		if (item->key == key)
+		{
+			return item;
+		}
+		item = item->ptrnext;
+	}
+	return NULL;
 }
 
 /*
@@ -94,9 +113,39 @@ tHTItem* htSearch ( tHTable* ptrht, tKey key ) {
 ** tedy proveďte.vložení prvku na začátek seznamu.
 **/
 
-void htInsert ( tHTable* ptrht, tKey key, tData data ) {
+void htInsert(tHTable *ptrht, tKey key, tData data)
+{
 
- solved = 0; /*v pripade reseni, smazte tento radek!*/
+	tHTItem *ptr_item_found;
+	//if item with key is already in table, update data
+	if ((ptr_item_found = htSearch(ptrht, key)) != NULL)
+	{
+		ptr_item_found->data = data;
+	}
+	else
+	{
+		//allocate new item
+		int index = hashCode(key);
+		tHTItem *new_item = (tHTItem *)malloc(sizeof(tHTItem));
+		new_item->key = key;
+		new_item->data = data;
+		new_item->ptrnext = NULL;
+		if (new_item == NULL)
+		{
+			return;
+		}
+		//set item as first at hash code index
+		if ((*ptrht)[index] == NULL)
+		{
+			(*ptrht)[index] = new_item;
+		}
+		else
+		{
+			tHTItem *tmp = (*ptrht)[index];
+			(*ptrht)[index] = new_item;
+			new_item->ptrnext = tmp;
+		}
+	}
 }
 
 /*
@@ -108,9 +157,15 @@ void htInsert ( tHTable* ptrht, tKey key, tData data ) {
 ** Využijte dříve vytvořenou funkci HTSearch.
 */
 
-tData* htRead ( tHTable* ptrht, tKey key ) {
+tData *htRead(tHTable *ptrht, tKey key)
+{
 
- solved = 0; /*v pripade reseni, smazte tento radek!*/
+	tHTItem *ptr_item_found;
+	if ((ptr_item_found = htSearch(ptrht, key)) != NULL)
+	{
+		return &ptr_item_found->data;
+	}
+	return NULL;
 }
 
 /*
@@ -123,9 +178,40 @@ tData* htRead ( tHTable* ptrht, tKey key ) {
 ** V tomto případě NEVYUŽÍVEJTE dříve vytvořenou funkci HTSearch.
 */
 
-void htDelete ( tHTable* ptrht, tKey key ) {
+void htDelete(tHTable *ptrht, tKey key)
+{
 
- solved = 0; /*v pripade reseni, smazte tento radek!*/
+	int index = hashCode(key);
+	tHTItem *ptr_item = (*ptrht)[index];
+	//delete first item
+	if (ptr_item->key == key)
+	{
+		tHTItem *tmp = ptr_item;
+		(*ptrht)[index] = ptr_item->ptrnext;
+		free(tmp);
+	}
+	else
+	{
+		while (ptr_item->ptrnext != NULL)
+		{
+			if (ptr_item->ptrnext->key == key)
+			{
+				//delete last item
+				if (ptr_item->ptrnext->ptrnext == NULL)
+				{
+					free(ptr_item->ptrnext);
+					ptr_item->ptrnext = NULL;
+				}
+				else
+				{
+					tHTItem *tmp = ptr_item->ptrnext->ptrnext;
+					free(ptr_item->ptrnext);
+					ptr_item = tmp;
+				}
+			}
+			ptr_item = ptr_item->ptrnext;
+		}
+	}
 }
 
 /* TRP s explicitně zřetězenými synonymy.
@@ -133,7 +219,19 @@ void htDelete ( tHTable* ptrht, tKey key ) {
 ** který tyto položky zabíraly, a uvede tabulku do počátečního stavu.
 */
 
-void htClearAll ( tHTable* ptrht ) {
-
- solved = 0; /*v pripade reseni, smazte tento radek!*/
+void htClearAll(tHTable *ptrht)
+{
+	//iterate over table items
+	for (int i = 0; i < HTSIZE; i++)
+	{
+		tHTItem *current = (*ptrht)[i];
+		//free all items of list
+		while (current != NULL)
+		{
+			tHTItem *tmp = current->ptrnext;
+			free(current);
+			(*ptrht)[i]= NULL;
+			current = tmp;
+		}
+	}
 }
