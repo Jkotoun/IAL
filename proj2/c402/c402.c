@@ -206,12 +206,11 @@ void BTInsert(tBTNodePtr *RootPtr, int Content)
 ** se ve stromu může vyskytnout nejvýše jednou). Pokud se vytváří nový uzel,
 ** vzniká vždy jako list stromu. Funkci implementujte nerekurzivně.
 **/
+	struct tBTNode **ptrToNodePtr;
 
 	if (*RootPtr == NULL)
 	{
-		*RootPtr = (tBTNodePtr)malloc(sizeof(struct tBTNode));
-		(*RootPtr)->Cont = Content;
-		(*RootPtr)->LPtr = (*RootPtr)->RPtr = NULL;
+		ptrToNodePtr = RootPtr;
 	}
 	else
 	{
@@ -223,9 +222,7 @@ void BTInsert(tBTNodePtr *RootPtr, int Content)
 				//value is greater than node key and rptr is null => store new node into rptr
 				if (current->RPtr == NULL)
 				{
-					current->RPtr = (tBTNodePtr)malloc(sizeof(struct tBTNode));
-					current->RPtr->Cont = Content;
-					current->RPtr->LPtr = current->RPtr->RPtr = NULL;
+					ptrToNodePtr = &(current->RPtr);
 					break;
 				}
 				current = current->RPtr;
@@ -235,9 +232,8 @@ void BTInsert(tBTNodePtr *RootPtr, int Content)
 				//value is smaller than node key and lptr is null => store new node into lptr
 				if (current->LPtr == NULL)
 				{
-					current->LPtr = (tBTNodePtr)malloc(sizeof(struct tBTNode));
-					current->LPtr->Cont = Content;
-					current->LPtr->LPtr = current->LPtr->RPtr = NULL;
+					ptrToNodePtr = &(current->LPtr);
+
 					break;
 				}
 				current = current->LPtr;
@@ -249,6 +245,9 @@ void BTInsert(tBTNodePtr *RootPtr, int Content)
 			}
 		} while (current != NULL);
 	}
+		(*ptrToNodePtr) = (tBTNodePtr)malloc(sizeof(struct tBTNode));
+		(*ptrToNodePtr)->Cont = Content;
+		(*ptrToNodePtr)->LPtr = (*ptrToNodePtr)->RPtr = NULL;
 }
 
 /*                                  PREORDER                                  */
