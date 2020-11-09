@@ -245,9 +245,9 @@ void BTInsert(tBTNodePtr *RootPtr, int Content)
 			}
 		} while (current != NULL);
 	}
-		(*ptrToNodePtr) = (tBTNodePtr)malloc(sizeof(struct tBTNode));
-		(*ptrToNodePtr)->Cont = Content;
-		(*ptrToNodePtr)->LPtr = (*ptrToNodePtr)->RPtr = NULL;
+	(*ptrToNodePtr) = (tBTNodePtr)malloc(sizeof(struct tBTNode));
+	(*ptrToNodePtr)->Cont = Content;
+	(*ptrToNodePtr)->LPtr = (*ptrToNodePtr)->RPtr = NULL;
 }
 
 /*                                  PREORDER                                  */
@@ -284,6 +284,7 @@ void BTPreorder(tBTNodePtr RootPtr)
 		current = STopPopP(stack);
 		Leftmost_Preorder(current->RPtr, stack);
 	}
+	free(stack);
 }
 
 /*                                  INORDER                                   */
@@ -321,6 +322,7 @@ void BTInorder(tBTNodePtr RootPtr)
 		BTWorkOut(current);
 		Leftmost_Inorder(current->RPtr, stack);
 	}
+	free(stack);
 }
 
 /*                                 POSTORDER                                  */
@@ -370,6 +372,8 @@ void BTPostorder(tBTNodePtr RootPtr)
 			BTWorkOut(RootPtr);
 		}
 	}
+	free(stackP);
+	free(stackB);
 }
 
 void BTDisposeTree(tBTNodePtr *RootPtr)
@@ -404,6 +408,7 @@ void BTDisposeTree(tBTNodePtr *RootPtr)
 
 	} while (ptr != NULL || !SEmptyP(stackP));
 	*RootPtr = NULL;
+	free(stackP);
 }
 
 /* konec c402.c */
